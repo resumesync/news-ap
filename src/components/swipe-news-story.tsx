@@ -172,10 +172,10 @@ export function SwipeNewsStory({
 
       {/* ----------------- 3. Instagram-style Left Action Rail & News Content ----------------- */}
       <div className="relative flex-1 min-h-0 flex flex-col justify-between bg-background overflow-hidden">
-        {/* Vertical Left Action Rail (LIKE -> SHARE -> VIEWS) */}
+        {/* Vertical Left Action Rail (LIKE -> SHARE) */}
         <aside
           aria-label="వార్తా చర్యలు"
-          className="absolute left-3 sm:left-4 -top-32 sm:-top-36 z-25 flex flex-col items-center gap-3 sm:gap-3.5 select-none pointer-events-auto"
+          className="absolute left-3 sm:left-4 -top-26 sm:-top-28 z-25 flex flex-col items-center gap-3 sm:gap-3.5 select-none pointer-events-auto"
         >
           {/* 1. LIKE BUTTON */}
           <button
@@ -220,19 +220,6 @@ export function SwipeNewsStory({
               {formatCompactCount(item.shares)}
             </span>
           </div>
-
-          {/* 3. VIEWS DISPLAY (NOT CLICKABLE) */}
-          <div
-            className="flex flex-col items-center gap-0.5 cursor-default"
-            title={`${viewsCount.toLocaleString()} మంది వీక్షించారు`}
-          >
-            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center bg-black/60 text-white/95 border border-white/20 shadow-lg backdrop-blur-md">
-              <span className="text-base sm:text-lg">👁</span>
-            </div>
-            <span className="text-[11px] sm:text-xs font-mono font-semibold tracking-tight text-white/90 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] tabular-nums">
-              {formatCompactCount(viewsCount)}
-            </span>
-          </div>
         </aside>
 
         {/* Content Body: Headings and Telugu Short Summary */}
@@ -253,9 +240,12 @@ export function SwipeNewsStory({
             {displaySummary}
           </p>
 
-          {/* Date & Time */}
-          <div className="text-[11px] font-sans text-muted-foreground/75 font-medium">
-            {formattedDate}
+          {/* Date & Time and Views at the bottom */}
+          <div className="flex items-center justify-between text-[11px] font-sans text-muted-foreground/75 font-medium pt-0.5">
+            <span>{formattedDate}</span>
+            <div className="flex items-center gap-1 text-muted-foreground tabular-nums">
+              <ViewCounter views={viewsCount} />
+            </div>
           </div>
         </div>
 
