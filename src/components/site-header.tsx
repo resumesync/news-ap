@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Menu, X, Facebook, Twitter, Instagram } from "lucide-react";
 import { useSettings } from "@/hooks/use-settings";
+import { PwaInstallPrompt } from "./pwa-install-prompt";
 import { cn } from "@/lib/utils";
 
 export function SiteHeader() {
@@ -86,6 +87,7 @@ export function SiteHeader() {
 
           {/* Desktop Minimal Navigation */}
           <nav className="hidden md:flex items-center gap-6 text-xs uppercase tracking-wider font-semibold font-sans">
+            <PwaInstallPrompt />
             <Link
               to="/"
               className="text-foreground hover:text-brand transition-colors py-1 border-b-2 border-transparent hover:border-brand"
@@ -100,8 +102,9 @@ export function SiteHeader() {
             </Link>
           </nav>
 
-          {/* Mobile Menu Toggle */}
+          {/* Mobile Actions */}
           <div className="flex items-center gap-2 md:hidden">
+            <PwaInstallPrompt />
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}

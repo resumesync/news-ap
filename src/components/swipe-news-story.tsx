@@ -7,6 +7,7 @@ import { incrementViews, isLikedByUser, toggleUserLike, recordNewsShare, getYouT
 import { LikeButton } from "./like-button";
 import { ShareMenu } from "./share-menu";
 import { ViewCounter } from "./view-counter";
+import { PwaInstallPrompt } from "./pwa-install-prompt";
 
 interface SwipeNewsStoryProps {
   item: NewsItem;
@@ -93,7 +94,9 @@ export function SwipeNewsStory({
           <span className="h-1.5 w-1.5 rounded-full bg-brand" />
         </Link>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <PwaInstallPrompt />
+
           <Link
             to="/news/$slug"
             params={{ slug: item.slug }}
