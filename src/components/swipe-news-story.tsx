@@ -167,9 +167,73 @@ export function SwipeNewsStory({
         )}
       </div>
 
-      {/* ----------------- 3. Short News Content & Full Article Link ----------------- */}
-      <div className="flex-1 min-h-0 flex flex-col justify-between px-4 sm:px-5 py-3 sm:py-3.5 bg-background overflow-hidden">
-        <div className="space-y-2 sm:space-y-2.5 overflow-hidden">
+      {/* ----------------- 3. Instagram-style Left Action Rail & News Content ----------------- */}
+      <div className="relative flex-1 min-h-0 flex flex-col justify-between bg-background overflow-hidden">
+        {/* Vertical Left Action Rail (LIKE -> SHARE -> VIEWS) */}
+        <aside
+          aria-label="వార్తా చర్యలు"
+          className="absolute left-3 sm:left-4 -top-32 sm:-top-36 z-25 flex flex-col items-center gap-3 sm:gap-3.5 select-none pointer-events-auto"
+        >
+          {/* 1. LIKE BUTTON */}
+          <button
+            type="button"
+            onClick={handleLikeToggle}
+            aria-label={liked ? "లైక్ తొలగించండి" : "లైక్ చేయండి"}
+            className="flex flex-col items-center gap-0.5 group cursor-pointer focus:outline-none"
+          >
+            <div
+              className={`w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center backdrop-blur-md shadow-lg transition-transform duration-150 active:scale-90 ${
+                liked
+                  ? "bg-rose-600 text-white shadow-rose-950/40 ring-2 ring-rose-400/40"
+                  : "bg-black/60 hover:bg-black/80 text-white/95 border border-white/20 group-hover:scale-105"
+              }`}
+            >
+              <span className={`text-lg sm:text-xl transition-transform ${liked ? "scale-110" : ""}`}>
+                {liked ? "♥" : "♡"}
+              </span>
+            </div>
+            <span
+              className={`text-[11px] sm:text-xs font-mono font-semibold tracking-tight tabular-nums drop-shadow-md ${
+                liked ? "text-rose-500 font-bold" : "text-white/90 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]"
+              }`}
+            >
+              {formatCompactCount(likesCount)}
+            </span>
+          </button>
+
+          {/* 2. SHARE BUTTON */}
+          <div className="flex flex-col items-center">
+            <ShareMenu
+              title={displayTitle}
+              description={displaySummary}
+              sharesCount={item.shares}
+              onShareTrack={handleShareTrack}
+              size="md"
+              showCount={false}
+              label=""
+              className="w-10 h-10 sm:w-11 sm:h-11 rounded-full !p-0 flex items-center justify-center bg-black/60 hover:bg-black/80 text-white/95 border border-white/20 shadow-lg backdrop-blur-md transition-transform duration-150 hover:scale-105 active:scale-90 group-hover:border-white/40 cursor-pointer"
+            />
+            <span className="text-[11px] sm:text-xs font-mono font-semibold tracking-tight text-white/90 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] tabular-nums mt-0.5">
+              {formatCompactCount(item.shares)}
+            </span>
+          </div>
+
+          {/* 3. VIEWS DISPLAY (NOT CLICKABLE) */}
+          <div
+            className="flex flex-col items-center gap-0.5 cursor-default"
+            title={`${viewsCount.toLocaleString()} మంది వీక్షించారు`}
+          >
+            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center bg-black/60 text-white/95 border border-white/20 shadow-lg backdrop-blur-md">
+              <span className="text-base sm:text-lg">👁</span>
+            </div>
+            <span className="text-[11px] sm:text-xs font-mono font-semibold tracking-tight text-white/90 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] tabular-nums">
+              {formatCompactCount(viewsCount)}
+            </span>
+          </div>
+        </aside>
+
+        {/* Content Body: Headings and Telugu Short Summary */}
+        <div className="px-4 sm:px-5 py-3 sm:py-3.5 space-y-2 sm:space-y-2.5 overflow-hidden">
           {/* Headline - Telugu Bold (8-15 words approx, max 2-3 lines) */}
           <h1 className="font-sans text-[1.18rem] sm:text-[1.32rem] md:text-[1.45rem] font-bold leading-[1.35] tracking-tight text-foreground line-clamp-3">
             <Link
@@ -192,47 +256,16 @@ export function SwipeNewsStory({
           </div>
         </div>
 
-        {/* ----------------- 4. Action Row & "పూర్తి వార్త →" Link ----------------- */}
-        <div className="shrink-0 pt-2 border-t border-rule/60 space-y-2">
-          {/* Engagement row */}
-          <div className="flex items-center justify-between gap-3">
-            {/* Views with eye icon */}
-            <div className="flex items-center gap-1 text-xs text-muted-foreground tabular-nums font-sans">
-              <ViewCounter views={viewsCount} />
-            </div>
-
-            {/* Like and Share buttons with Telugu labels */}
-            <div className="flex items-center gap-2">
-              <LikeButton
-                initialCount={likesCount}
-                initialLiked={liked}
-                onToggle={handleLikeToggle}
-                size="sm"
-                label="లైక్"
-              />
-
-              <ShareMenu
-                title={displayTitle}
-                description={displaySummary}
-                sharesCount={item.shares}
-                onShareTrack={handleShareTrack}
-                size="sm"
-                label="షేర్"
-              />
-            </div>
-          </div>
-
-          {/* Dedicated "పూర్తి వార్త →" prominent button */}
-          <div className="pt-1">
-            <Link
-              to="/news/$slug"
-              params={{ slug: item.slug }}
-              className="w-full py-1.5 px-3 rounded-xs border border-rule/80 bg-secondary/50 hover:bg-brand/10 hover:border-brand/40 text-foreground hover:text-brand transition-colors text-xs font-semibold text-center flex items-center justify-center gap-1.5 font-sans"
-            >
-              <span>పూర్తి వార్త చదవండి</span>
-              <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
-          </div>
+        {/* ----------------- 4. Bottom Area: Dedicated "పూర్తి వార్త →" Link ----------------- */}
+        <div className="shrink-0 px-4 sm:px-5 pb-3 sm:pb-3.5 pt-1">
+          <Link
+            to="/news/$slug"
+            params={{ slug: item.slug }}
+            className="w-full py-2 px-4 rounded-xs border border-rule/80 bg-secondary/60 hover:bg-brand/10 hover:border-brand/40 text-foreground hover:text-brand transition-colors text-xs sm:text-sm font-semibold text-center flex items-center justify-center gap-1.5 font-sans shadow-xs"
+          >
+            <span>పూర్తి వార్త చదవండి</span>
+            <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
         </div>
       </div>
 
