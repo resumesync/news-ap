@@ -1,0 +1,25 @@
+{
+  "name": "EIGHT NEWS — తెలుగు షార్ట్ న్యూస్",
+  "short_name": "EIGHT NEWS",
+  "description": "ప్రతి వార్తను క్షణాల్లో తెలుసుకోండి. తెలుగు షార్ట్ న్యూస్, లైవ్ అప్‌డేట్స్ - EIGHT NEWS.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a0a0a",
+  "theme_color": "#dc2626",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["news", "magazines"]
+}
