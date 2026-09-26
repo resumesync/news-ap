@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Link } from "@tanstack/react-router";
 import { Play, X, ChevronUp, ArrowRight } from "lucide-react";
 import type { NewsItem } from "@/data/types";
-import { formatStoryDate } from "@/lib/format";
+import { formatStoryDate, formatCompactCount } from "@/lib/format";
 import { incrementViews, isLikedByUser, toggleUserLike, recordNewsShare, getYouTubeEmbedUrl } from "@/lib/storage";
 import { LikeButton } from "./like-button";
 import { ShareMenu } from "./share-menu";
