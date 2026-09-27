@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "@tanstack/react-router";
-import { Play, X, ChevronUp, ArrowRight } from "lucide-react";
+import { Play, X, ChevronUp, ArrowRight, Heart } from "lucide-react";
 import type { NewsItem } from "@/data/types";
 import { formatStoryDate, formatCompactCount } from "@/lib/format";
 import { incrementViews, isLikedByUser, toggleUserLike, recordNewsShare, getYouTubeEmbedUrl } from "@/lib/storage";
@@ -8,6 +8,7 @@ import { LikeButton } from "./like-button";
 import { ShareMenu } from "./share-menu";
 import { ViewCounter } from "./view-counter";
 import { PwaInstallPrompt } from "./pwa-install-prompt";
+import { cn } from "@/lib/utils";
 
 interface SwipeNewsStoryProps {
   item: NewsItem;
@@ -185,38 +186,45 @@ export function SwipeNewsStory({
             className="flex flex-col items-center gap-0.5 group cursor-pointer focus:outline-none"
           >
             <div
-              className={`w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center backdrop-blur-md shadow-lg transition-transform duration-150 active:scale-90 ${
+              className={cn(
+                "w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center backdrop-blur-md shadow-lg transition-all duration-150 active:scale-90",
                 liked
                   ? "bg-rose-600 text-white shadow-rose-950/40 ring-2 ring-rose-400/40"
-                  : "bg-black/60 hover:bg-black/80 text-white/95 border border-white/20 group-hover:scale-105"
-              }`}
+                  : "bg-black/60 hover:bg-black/80 text-white/95 border border-white/20 group-hover:scale-105 group-hover:border-white/40",
+              )}
             >
-              <span className={`text-lg sm:text-xl transition-transform ${liked ? "scale-110" : ""}`}>
-                {liked ? "♥" : "♡"}
-              </span>
+              <Heart
+                className={cn(
+                  "w-5 h-5 sm:w-5.5 sm:h-5.5 transition-all duration-200",
+                  liked
+                    ? "fill-white text-white scale-110 drop-shadow-sm"
+                    : "text-white/95 stroke-[2.2] group-hover:scale-110",
+                )}
+              />
             </div>
             <span
-              className={`text-[11px] sm:text-xs font-mono font-semibold tracking-tight tabular-nums drop-shadow-md ${
-                liked ? "text-rose-500 font-bold" : "text-white/90 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]"
-              }`}
+              className={cn(
+                "text-[11px] sm:text-xs font-mono font-semibold tracking-tight tabular-nums drop-shadow-md",
+                liked ? "text-rose-500 font-bold" : "text-white/90 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]",
+              )}
             >
               {formatCompactCount(likesCount)}
             </span>
           </button>
 
           {/* 2. SHARE BUTTON */}
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col items-center gap-0.5 group cursor-pointer focus:outline-none">
             <ShareMenu
               title={displayTitle}
               description={displaySummary}
               sharesCount={item.shares}
               onShareTrack={handleShareTrack}
-              size="md"
-              showCount={false}
-              label=""
-              className="w-10 h-10 sm:w-11 sm:h-11 rounded-full !p-0 flex items-center justify-center bg-black/60 hover:bg-black/80 text-white/95 border border-white/20 shadow-lg backdrop-blur-md transition-transform duration-150 hover:scale-105 active:scale-90 group-hover:border-white/40 cursor-pointer"
+              variant="rail"
+              side="right"
+              align="start"
+              sideOffset={14}
             />
-            <span className="text-[11px] sm:text-xs font-mono font-semibold tracking-tight text-white/90 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] tabular-nums mt-0.5">
+            <span className="text-[11px] sm:text-xs font-mono font-semibold tracking-tight text-white/90 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] tabular-nums">
               {formatCompactCount(item.shares)}
             </span>
           </div>
