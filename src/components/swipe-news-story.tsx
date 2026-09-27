@@ -1,9 +1,17 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "@tanstack/react-router";
 import { Play, X, ChevronUp, ArrowRight, Heart } from "lucide-react";
-import type { NewsItem } from "@/data/types";
+import type { NewsItem, Advertisement } from "@/data/types";
 import { formatStoryDate, formatCompactCount } from "@/lib/format";
-import { incrementViews, isLikedByUser, toggleUserLike, recordNewsShare, getYouTubeEmbedUrl } from "@/lib/storage";
+import {
+  incrementViews,
+  isLikedByUser,
+  toggleUserLike,
+  recordNewsShare,
+  getYouTubeEmbedUrl,
+  recordAdImpression,
+  recordAdClick,
+} from "@/lib/storage";
 import { LikeButton } from "./like-button";
 import { ShareMenu } from "./share-menu";
 import { ViewCounter } from "./view-counter";
@@ -15,6 +23,7 @@ interface SwipeNewsStoryProps {
   index: number;
   isFirst?: boolean;
   showSwipeHint?: boolean;
+  bannerAd?: Advertisement | null;
   onVisible?: (id: string, index: number) => void;
 }
 
@@ -23,6 +32,7 @@ export function SwipeNewsStory({
   index,
   isFirst = false,
   showSwipeHint = false,
+  bannerAd,
   onVisible,
 }: SwipeNewsStoryProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -37,6 +47,29 @@ export function SwipeNewsStory({
 
   const displayTitle = item.titleTe || item.title || "";
   const displaySummary = item.shortSummaryTe || item.shortDescription || "";
+
+  // Active banner ad (fallback to Kanakadurga Jewellers Tenali)
+  const activeAd = bannerAd || {
+    id: "ad-kanakadurga",
+    title: "Kanakadurga Jewellers Tenali — 916 Hallmark Jewellery",
+    titleTe: "కనకదుర్గ జ్యుయలర్స్ తెనాలి — 916 హాల్ మార్క్ ఆభరణములు చేయబడును",
+    image: "/ads/kanakadurga-jewellers-banner.png",
+    targetUrl: "tel:08644226823",
+    sponsorName: "కనకదుర్గ జ్యుయలర్స్ తెనాలి",
+  };
+
+  useEffect(() => {
+    if (activeAd?.id) {
+      recordAdImpression(activeAd.id);
+    }
+  }, [activeAd?.id]);
+
+  const handleBannerAdClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (activeAd?.id) {
+      recordAdClick(activeAd.id);
+    }
+  };
 
   // IntersectionObserver to register view when the story enters the viewport
   useEffect(() => {
@@ -113,8 +146,8 @@ export function SwipeNewsStory({
         </div>
       </header>
 
-      {/* ----------------- 2. News Image (45-50% Viewport Height) ----------------- */}
-      <div className="relative w-full h-[45svh] sm:h-[47svh] shrink-0 bg-neutral-900 overflow-hidden">
+      {/* ----------------- 2. News Image (39-41% Viewport Height) ----------------- */}
+      <div className="relative w-full h-[39svh] sm:h-[41svh] shrink-0 bg-neutral-900 overflow-hidden">
         {/* If video player is active */}
         {isPlayingVideo && embedUrl ? (
           <div className="relative w-full h-full bg-black z-10 animate-in fade-in duration-200">
@@ -128,7 +161,7 @@ export function SwipeNewsStory({
             <button
               type="button"
               onClick={() => setIsPlayingVideo(false)}
-              className="absolute top-3 right-3 bg-black/80 hover:bg-black text-white p-1.5 rounded-full backdrop-blur-md transition-colors shadow-lg cursor-pointer"
+              className="absolute top-3 right-3 bg-black/80 hover:bg-black text-white p-1.5 rounded-full backdrop-blur-md transition-colors shadow-lg cursor-pointer z-30"
               title="వీడియో మూసివేయి"
             >
               <X className="h-4 w-4" />
@@ -144,7 +177,7 @@ export function SwipeNewsStory({
             />
 
             {/* Gradient overlay for contrast */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20 pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20 pointer-events-none" />
 
             {/* Video Play Button (Only shown when video exists) */}
             {hasVideo && (
@@ -169,66 +202,88 @@ export function SwipeNewsStory({
             )}
           </>
         )}
+
+        {/* Vertical Left Action Rail (LIKE -> SHARE) anchored over media */}
+        {!isPlayingVideo && (
+          <aside
+            aria-label="వార్తా చర్యలు"
+            className="absolute left-3 sm:left-4 bottom-2.5 sm:bottom-3 z-20 flex flex-col items-center gap-2.5 sm:gap-3 select-none pointer-events-auto"
+          >
+            {/* 1. LIKE BUTTON */}
+            <button
+              type="button"
+              onClick={handleLikeToggle}
+              aria-label={liked ? "లైక్ తొలగించండి" : "లైక్ చేయండి"}
+              className="flex flex-col items-center gap-0.5 group cursor-pointer focus:outline-none"
+            >
+              <div
+                className={cn(
+                  "w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center backdrop-blur-md shadow-lg transition-all duration-150 active:scale-90",
+                  liked
+                    ? "bg-rose-600 text-white shadow-rose-950/40 ring-2 ring-rose-400/40"
+                    : "bg-black/60 hover:bg-black/80 text-white/95 border border-white/20 group-hover:scale-105 group-hover:border-white/40",
+                )}
+              >
+                <Heart
+                  className={cn(
+                    "w-5 h-5 sm:w-5.5 sm:h-5.5 transition-all duration-200",
+                    liked
+                      ? "fill-white text-white scale-110 drop-shadow-sm"
+                      : "text-white/95 stroke-[2.2] group-hover:scale-110",
+                  )}
+                />
+              </div>
+              <span
+                className={cn(
+                  "text-[11px] sm:text-xs font-mono font-semibold tracking-tight tabular-nums drop-shadow-md",
+                  liked ? "text-rose-500 font-bold" : "text-white/90 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]",
+                )}
+              >
+                {formatCompactCount(likesCount)}
+              </span>
+            </button>
+
+            {/* 2. SHARE BUTTON */}
+            <div className="flex flex-col items-center gap-0.5 group cursor-pointer focus:outline-none">
+              <ShareMenu
+                title={displayTitle}
+                description={displaySummary}
+                sharesCount={item.shares}
+                onShareTrack={handleShareTrack}
+                variant="rail"
+                side="right"
+                align="start"
+                sideOffset={14}
+              />
+              <span className="text-[11px] sm:text-xs font-mono font-semibold tracking-tight text-white/90 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] tabular-nums">
+                {formatCompactCount(item.shares)}
+              </span>
+            </div>
+          </aside>
+        )}
       </div>
 
-      {/* ----------------- 3. Instagram-style Left Action Rail & News Content ----------------- */}
-      <div className="relative flex-1 min-h-0 flex flex-col justify-between bg-background overflow-hidden">
-        {/* Vertical Left Action Rail (LIKE -> SHARE) */}
-        <aside
-          aria-label="వార్తా చర్యలు"
-          className="absolute left-3 sm:left-4 -top-26 sm:-top-28 z-25 flex flex-col items-center gap-3 sm:gap-3.5 select-none pointer-events-auto"
+      {/* ----------------- 2.5. News Banner Ad Strip (On Every News) ----------------- */}
+      <div className="w-full shrink-0 bg-white border-y border-neutral-200 dark:border-neutral-800 shadow-xs z-15 overflow-hidden">
+        <a
+          href={activeAd.targetUrl || "tel:08644226823"}
+          target={activeAd.targetUrl?.startsWith("tel:") ? "_self" : "_blank"}
+          rel="noopener noreferrer"
+          onClick={handleBannerAdClick}
+          aria-label={`ప్రకటన: ${activeAd.titleTe || activeAd.title || "కనకదుర్గ జ్యుయలర్స్ తెనాలి"}`}
+          className="block relative w-full h-[46px] sm:h-[52px] bg-white overflow-hidden cursor-pointer group"
         >
-          {/* 1. LIKE BUTTON */}
-          <button
-            type="button"
-            onClick={handleLikeToggle}
-            aria-label={liked ? "లైక్ తొలగించండి" : "లైక్ చేయండి"}
-            className="flex flex-col items-center gap-0.5 group cursor-pointer focus:outline-none"
-          >
-            <div
-              className={cn(
-                "w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center backdrop-blur-md shadow-lg transition-all duration-150 active:scale-90",
-                liked
-                  ? "bg-rose-600 text-white shadow-rose-950/40 ring-2 ring-rose-400/40"
-                  : "bg-black/60 hover:bg-black/80 text-white/95 border border-white/20 group-hover:scale-105 group-hover:border-white/40",
-              )}
-            >
-              <Heart
-                className={cn(
-                  "w-5 h-5 sm:w-5.5 sm:h-5.5 transition-all duration-200",
-                  liked
-                    ? "fill-white text-white scale-110 drop-shadow-sm"
-                    : "text-white/95 stroke-[2.2] group-hover:scale-110",
-                )}
-              />
-            </div>
-            <span
-              className={cn(
-                "text-[11px] sm:text-xs font-mono font-semibold tracking-tight tabular-nums drop-shadow-md",
-                liked ? "text-rose-500 font-bold" : "text-white/90 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]",
-              )}
-            >
-              {formatCompactCount(likesCount)}
-            </span>
-          </button>
+          <img
+            src={activeAd.image || "/ads/kanakadurga-jewellers-banner.png"}
+            alt={activeAd.titleTe || activeAd.title || "కనకదుర్గ జ్యుయలర్స్"}
+            loading="eager"
+            className="w-full h-full object-cover sm:object-contain object-center transition-transform duration-200 group-hover:scale-[1.01]"
+          />
+        </a>
+      </div>
 
-          {/* 2. SHARE BUTTON */}
-          <div className="flex flex-col items-center gap-0.5 group cursor-pointer focus:outline-none">
-            <ShareMenu
-              title={displayTitle}
-              description={displaySummary}
-              sharesCount={item.shares}
-              onShareTrack={handleShareTrack}
-              variant="rail"
-              side="right"
-              align="start"
-              sideOffset={14}
-            />
-            <span className="text-[11px] sm:text-xs font-mono font-semibold tracking-tight text-white/90 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] tabular-nums">
-              {formatCompactCount(item.shares)}
-            </span>
-          </div>
-        </aside>
+      {/* ----------------- 3. News Content Body ----------------- */}
+      <div className="relative flex-1 min-h-0 flex flex-col justify-between bg-background overflow-hidden">
 
         {/* Content Body: Headings and Telugu Short Summary */}
         <div className="px-4 sm:px-5 py-3 sm:py-3.5 space-y-2 sm:space-y-2.5 overflow-hidden">

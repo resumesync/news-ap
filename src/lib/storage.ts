@@ -236,10 +236,15 @@ export function getStoredAds(): Advertisement[] {
       localStorage.setItem(ADS_KEY, JSON.stringify(INITIAL_ADS));
       return INITIAL_ADS;
     }
-    const parsed = JSON.parse(raw);
+    let parsed: Advertisement[] = JSON.parse(raw);
     if (!Array.isArray(parsed) || parsed.length === 0 || !parsed[0]?.titleTe) {
       localStorage.setItem(ADS_KEY, JSON.stringify(INITIAL_ADS));
       return INITIAL_ADS;
+    }
+    // Ensure Kanakadurga Jewellers banner ad is present
+    if (!parsed.some((a) => a.id === "ad-kanakadurga" || a.position === "NEWS_BANNER")) {
+      parsed = [INITIAL_ADS[0], ...parsed];
+      localStorage.setItem(ADS_KEY, JSON.stringify(parsed));
     }
     return parsed;
   } catch {

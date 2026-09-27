@@ -2,6 +2,21 @@ import type { Advertisement } from "./types";
 
 export const INITIAL_ADS: Advertisement[] = [
   {
+    id: "ad-kanakadurga",
+    title: "Kanakadurga Jewellers Tenali — 916 Hallmark Jewellery",
+    titleTe: "కనకదుర్గ జ్యుయలర్స్ తెనాలి — 916 హాల్ మార్క్ ఆభరణములు చేయబడును",
+    image: "/ads/kanakadurga-jewellers-banner.png",
+    targetUrl: "tel:08644226823",
+    position: "NEWS_BANNER",
+    frequency: 1,
+    startDate: "2026-01-01",
+    endDate: "2026-12-31",
+    status: "active",
+    impressions: 89450,
+    clicks: 4210,
+    sponsorName: "కనకదుర్గ జ్యుయలర్స్ తెనాలి",
+  },
+  {
     id: "ad-1",
     title: "The Financial Times & Nikkei — Asian Economic Intelligence 2026",
     titleTe: "ఫైనాన్షియల్ టైమ్స్ & నిక్కీ — గ్లోబల్ ఎకనామిక్ ఇంటెలిజెన్స్ నివేదిక 2026",

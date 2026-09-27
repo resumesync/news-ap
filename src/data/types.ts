@@ -31,7 +31,8 @@ export type AdPosition =
   | "BETWEEN_NEWS"
   | "ARTICLE_MIDDLE"
   | "BOTTOM"
-  | "STICKY_BOTTOM";
+  | "STICKY_BOTTOM"
+  | "NEWS_BANNER";
 
 export interface Advertisement {
   id: string;

@@ -55,6 +55,7 @@ export function AdvertisementTable({
             className="bg-[#fbfbfa] border border-rule/80 rounded-xs px-2.5 py-1.5 text-xs text-foreground focus:outline-none focus:border-brand"
           >
             <option value="all">All Placements ({ads.length})</option>
+            <option value="NEWS_BANNER">NEWS_BANNER (Every News Story)</option>
             <option value="TOP">TOP (Masthead Banner)</option>
             <option value="BETWEEN_NEWS">BETWEEN_NEWS (Interleaved)</option>
             <option value="ARTICLE_MIDDLE">ARTICLE_MIDDLE (In-Story)</option>
@@ -140,6 +141,8 @@ export function AdvertisementTable({
                     <td className="py-2.5 px-3 text-center font-mono">
                       {ad.position === "BETWEEN_NEWS" ? (
                         <span className="font-semibold text-foreground">Every {ad.frequency}</span>
+                      ) : ad.position === "NEWS_BANNER" ? (
+                        <span className="font-semibold text-rose-600">Every News</span>
                       ) : (
                         <span className="text-muted-foreground/50">—</span>
                       )}

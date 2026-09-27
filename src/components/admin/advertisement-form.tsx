@@ -185,7 +185,8 @@ export function AdvertisementForm({
                 value={position}
                 onChange={(e) => setPosition(e.target.value as AdPosition)}
                 className="w-full bg-[#fbfbfa] border border-rule rounded-xs px-3 py-2 text-xs font-semibold focus:outline-none focus:border-brand"
-              >
+            >
+              <option value="NEWS_BANNER">NEWS_BANNER (Every News Story Banner)</option>
                 <option value="TOP">TOP (Masthead Banner)</option>
                 <option value="BETWEEN_NEWS">BETWEEN_NEWS (Interleaved in Feed)</option>
                 <option value="ARTICLE_MIDDLE">ARTICLE_MIDDLE (In-Article Body)</option>

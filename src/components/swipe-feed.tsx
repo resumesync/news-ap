@@ -36,6 +36,13 @@ export function SwipeFeed({
     );
   }, [ads, adsEnabled]);
 
+  // Active banner ads for every news story strip
+  const activeBannerAds = useMemo(() => {
+    return ads.filter(
+      (a) => a.status === "active" && a.position === "NEWS_BANNER",
+    );
+  }, [ads]);
+
   // Construct the interleaved feed entries
   const feedEntries: FeedEntry[] = useMemo(() => {
     const entries: FeedEntry[] = [];
@@ -206,6 +213,11 @@ export function SwipeFeed({
               );
             }
 
+            const bannerAd =
+              activeBannerAds.length > 0
+                ? activeBannerAds[entry.newsIndex % activeBannerAds.length]
+                : undefined;
+
             return (
               <SwipeNewsStory
                 key={entry.key}
@@ -213,6 +225,7 @@ export function SwipeFeed({
                 index={idx}
                 isFirst={entry.newsIndex === 0}
                 showSwipeHint={showSwipeHint && currentSlideIndex === 0}
+                bannerAd={bannerAd}
               />
             );
           })}
